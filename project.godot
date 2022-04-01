@@ -11,7 +11,17 @@ config_version=4
 [application]
 
 config/name="LD-50"
+config/description="Ludum Dare 50 game jam entry."
 config/icon="res://icon.png"
+
+[display]
+
+window/size/width=640
+window/size/height=320
+window/size/test_width=1280
+window/size/test_height=640
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [physics]
 
