@@ -12,6 +12,7 @@ config_version=4
 
 config/name="LD-50"
 config/description="Ludum Dare 50 game jam entry."
+run/main_scene="res://scenes/Main.tscn"
 config/icon="res://icon.png"
 
 [display]
