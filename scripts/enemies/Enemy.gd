@@ -58,14 +58,13 @@ func _check_target():
 	if !is_instance_valid(target) and !on_path:
 		if world.get_node("Phylacteries").get_child_count() > 0:
 			target = world.get_node("Phylacteries").get_child(0)
-		elif world.get_node("Player") != null:
+		elif world.get_node_or_null("Player") != null:
 			target = world.get_node("Player")
-	elif attacking:
-		attacking = false
+		
 
 
 func navigate_and_move():
-	if !on_path:
+	if !on_path and is_instance_valid(target):
 		if target.global_position != target_pos:
 			target_pos = target.global_position
 	#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
@@ -81,7 +80,11 @@ func navigate_and_move():
 	# Get path
 	if path.size() > 1:
 		velocity = global_position.direction_to(path[1]) * speed
-#		$RayCast2D.cast_to = velocity
+		$RayCast2D.cast_to = velocity
+		$RayCast2D.cast_to.x = clamp($RayCast2D.cast_to.x/2, -42, 42)
+		$RayCast2D.cast_to.y = clamp($RayCast2D.cast_to.y/2, -42, 42)
+		
+#		print($RayCast2D.cast_to)
 		# Reach point, pop it from the list
 		if global_position == path[1] or global_position.distance_to(path[1]) < 8:
 			path.pop_front()
@@ -93,36 +96,15 @@ func navigate_and_move():
 		else:
 			on_path = false
 			_check_target()
-		
-	# Test collision
-	var collision = move_and_collide(velocity, true, true, true)
-	# Move
-	var previous_pos = global_position
 	velocity = move_and_slide(velocity)
-	distance_travelled += previous_pos.distance_to(global_position)
-	if collision != null:
-#		print(collision.collider.name)
-		var distance = 1000
-#		var distance = global_position.distance_to(collision.collider.global_position)
-#		print("Distance to target", distance)
-		if  (!(target is Vector2) and collision.collider == target) or collision.collider.is_in_group("corpse"):
-			if collision.collider.get_node("Health").alive():
-	#			print(collision.collider.name)
-				if collision.collider.is_in_group("corpse"):
-					distance = global_position.distance_to(collision.collider.global_position)
-#					print("Corpse ahead, me at ", global_position)
-	#				print("Corpse targeted")
-					attack_target = collision.collider
-				else:
-	#				print("not a corpse")
-					distance = global_position.distance_to(collision.collider.global_position)
-			
-#				print("Attack distance - ", distance)
-#				print("Target - ", attack_target)
-				if distance <= attack_range and !attacking and $AttackTime.is_stopped():
-					attacking = true
-					$AttackTime.start()
-		
+	
+	var collider = $RayCast2D.get_collider()
+	if collider != null and !attacking:
+#		print("[%s] Attack %s " % [self.name, collider.name])
+		attacking = true
+		attack_target = collider
+		$AttackTime.start(0)
+	
 	
 
 func _on_Enemy_hit():
@@ -140,32 +122,18 @@ func _on_dead():
 func _on_attack():
 #	print("Me", self)
 	distance_travelled += 75
-	if attack_target == null or !is_instance_valid(attack_target):
-#		print("Attack target not valid")
-		if !(target is Vector2):
-			attack_target = target
-	
-	if is_instance_valid(attack_target):
-#		print("Attack target valid ", attack_target)
-		#print("target ", target != null)
-#		print("   Me at %s | target at %s " % [global_position, attack_target.global_position])
-		
-		var distance = global_position.distance_to(attack_target.global_position)
-#		print("   Target in ", distance)
-		if  distance <= attack_range:
-#			print("Enough distance")
-			attack_target.emit_signal("hit")
-			if attack_target.get_node("Health").alive():
-				$AttackCooldown.start()
-		else:
-#			print("Not attacking")
-			attacking = false
-	else:
-		attacking = false
+#	
+#	print("%s Attack %s" % [self.name, attack_target])
+	attack_target.emit_signal("hit")
+	if attack_target.get_node("Health").alive():
+		$AttackCooldown.start()
 
 
 func _on_attack_cooldown():
-	$AttackTime.start()
+	if $RayCast2D.collider != null:
+		$AttackTime.start()
+	else:
+		attacking = false
 
 
 func _on_stuck_check():

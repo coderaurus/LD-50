@@ -27,19 +27,21 @@ width = 5.0
 default_color = Color( 1, 0.211765, 0, 1 )
 
 [node name="Health" parent="." instance=ExtResource( 3 )]
+max_hp = 3
 
 [node name="AttackTime" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 0.1
 one_shot = true
 
 [node name="AttackCooldown" type="Timer" parent="."]
 one_shot = true
 
-[node name="RayCast2D" type="RayCast2D" parent="."]
-enabled = true
-
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 10.0
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true
+collision_mask = 10
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_Enemy_hit"]

@@ -4,7 +4,7 @@ extends Node2D
 #export var enemy_list : Dictionary = {} 
 onready var enemy = preload("res://scenes/enemies/Enemy.tscn")
 onready var world = get_tree().current_scene.get_node("World")
-export var inital_index = 0
+export var initial_index = 0
 
 var spawn_rules = []
 var spawns_per_wave = 5
@@ -47,7 +47,7 @@ func _on_spawn():
 	match spawn_rules[spawned][1]:
 		"path": # follow the road
 			e.on_path = true
-			e.followed_path = world.get_node("Map").get_node("Road").get_child(inital_index)
+			e.followed_path = world.get_node("Map").get_node("Road").get_child(initial_index)
 		"wild": # spawn and "beeline"
 			e.on_path = false
 			e.global_position = global_position
@@ -58,7 +58,9 @@ func _on_spawn():
 				e.on_path = true
 		
 	# Determine phylactery
-	e.target = world.get_node("Phylacteries").get_child(inital_index)
+	var phyla_count = world.get_node("Phylacteries").get_child_count() 
+	if  phyla_count > 0 and phyla_count > initial_index:
+		e.target = world.get_node("Phylacteries").get_child(initial_index)
 	
 	world.get_node("Enemies").add_child(e)
 	e.activate()

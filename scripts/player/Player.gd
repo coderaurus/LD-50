@@ -33,3 +33,12 @@ func _process(delta):
 	
 func _physics_process(delta):
 	move_and_slide(velocity * speed)
+
+
+func _on_hit():
+	$Health.emit_signal("hit")
+
+
+func _on_dead():
+	get_tree().current_scene.game_over()
+	queue_free()
