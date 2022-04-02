@@ -28,4 +28,5 @@ func _process(delta):
 	if velocity != Vector2.ZERO:
 		velocity.normalized()
 	
+func _physics_process(delta):
 	move_and_slide(velocity * speed)
