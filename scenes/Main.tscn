@@ -1,18 +1,20 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scenes/player/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scripts/enemies/Enemy.gd" type="Script" id=2]
-[ext_resource path="res://gfx/enemy.png" type="Texture" id=3]
+[ext_resource path="res://scenes/enemies/Enemy.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gfx/phylactery.png" type="Texture" id=3]
 [ext_resource path="res://tiles/main_tiles.tres" type="TileSet" id=4]
+[ext_resource path="res://scenes/Health.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scripts/player/Phylactery.gd" type="Script" id=6]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="RectangleShape2D" id=1]
 
 [node name="Main" type="Node2D"]
 
 [node name="World" type="Node2D" parent="."]
 
 [node name="Player" parent="World" instance=ExtResource( 1 )]
-position = Vector2( 322, 152 )
+position = Vector2( 246, 206 )
 
 [node name="Map" type="Navigation2D" parent="World"]
 
@@ -34,26 +36,39 @@ cell_tile_origin = 1
 format = 1
 tile_data = PoolIntArray( 9, 2, 0, 65537, 2, 0, 65538, 2, 0, 65539, 2, 0, 65545, 2, 0, 65552, 2, 0, 65553, 2, 0, 65554, 2, 0, 131073, 2, 0, 131074, 2, 0, 131075, 2, 0, 131081, 2, 0, 131088, 2, 0, 131089, 2, 0, 131090, 2, 0, 196609, 2, 0, 196610, 2, 0, 196611, 2, 0, 196617, 2, 0, 196624, 2, 0, 196625, 2, 0, 196626, 2, 0, 262146, 2, 0, 262153, 2, 0, 262161, 2, 0, 327682, 2, 0, 327683, 2, 0, 327684, 2, 0, 327685, 2, 0, 327686, 2, 0, 327687, 2, 0, 327688, 2, 0, 327689, 2, 0, 327697, 2, 0, 393233, 2, 0, 458769, 2, 0, 524288, 2, 0, 524289, 2, 0, 524290, 2, 0, 524291, 2, 0, 524292, 2, 0, 524293, 2, 0, 524294, 2, 0, 524295, 2, 0, 524296, 2, 0, 524297, 2, 0, 524298, 2, 0, 524299, 2, 0, 524300, 2, 0, 524301, 2, 0, 524302, 2, 0, 524303, 2, 0, 524304, 2, 0, 524305, 2, 0 )
 
+[node name="Path" type="Line2D" parent="World/Map/Road"]
+position = Vector2( 1, 1 )
+points = PoolVector2Array( -1, 272, 559, 273, 559, 112 )
+
+[node name="Path2" type="Line2D" parent="World/Map/Road"]
+position = Vector2( 1, 0 )
+points = PoolVector2Array( 302, -4, 307, 177, 81, 176, 80, 102 )
+
 [node name="Enemies" type="Node2D" parent="World"]
 
-[node name="Enemy" type="KinematicBody2D" parent="World/Enemies"]
-position = Vector2( 39, 280 )
-script = ExtResource( 2 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Enemies/Enemy"]
-shape = SubResource( 1 )
-
-[node name="Sprite" type="Sprite" parent="World/Enemies/Enemy"]
-position = Vector2( 0, -19 )
-z_index = 2
-texture = ExtResource( 3 )
-
-[node name="PathVisual" type="Line2D" parent="World/Enemies/Enemy"]
-z_index = 100
-z_as_relative = false
-width = 5.0
-default_color = Color( 1, 0.211765, 0, 1 )
+[node name="Enemy" parent="World/Enemies" instance=ExtResource( 2 )]
 
 [node name="Camera2D" type="Camera2D" parent="World"]
 position = Vector2( 321, 158 )
 current = true
+
+[node name="Phylacteries" type="Node2D" parent="World"]
+
+[node name="Phylactery" type="KinematicBody2D" parent="World/Phylacteries"]
+position = Vector2( 80, 70 )
+z_index = 5
+z_as_relative = false
+script = ExtResource( 6 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Phylacteries/Phylactery"]
+position = Vector2( -1, -7 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="World/Phylacteries/Phylactery"]
+position = Vector2( -2, -26 )
+texture = ExtResource( 3 )
+
+[node name="Health" parent="World/Phylacteries/Phylactery" instance=ExtResource( 5 )]
+
+[connection signal="dead" from="World/Phylacteries/Phylactery" to="World/Phylacteries/Phylactery" method="_on_dead"]
+[connection signal="hit" from="World/Phylacteries/Phylactery" to="World/Phylacteries/Phylactery" method="_on_hit"]
