@@ -100,8 +100,9 @@ func navigate_and_move():
 		else:
 			on_path = false
 			_check_target()
+	var old_pos = global_position
 	velocity = move_and_slide(velocity)
-	
+	distance_travelled += old_pos.distance_to(global_position)
 	var collider = $RayCast2D.get_collider()
 	if collider != null and !attacking:
 #		print("[%s] Attack %s " % [self.name, collider.name])
@@ -142,7 +143,7 @@ func _on_attack_cooldown():
 
 func _on_stuck_check():
 	# Enemy stuck, respawn
-#	print("Travelled distance ", distance_travelled)
+	print("Travelled distance ", distance_travelled)
 #	print("  Attacking: %s | On path: %s" % [attacking, on_path])
 #	print("  Spawning back at %s" % respawn_point)
 	if distance_travelled <= 450:

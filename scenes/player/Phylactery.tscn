@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/Health.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/Health.gd" type="Script" id=2]
 [ext_resource path="res://gfx/phylactery.png" type="Texture" id=3]
 [ext_resource path="res://scripts/player/Phylactery.gd" type="Script" id=4]
 
@@ -21,10 +20,7 @@ shape = SubResource( 1 )
 position = Vector2( -2, -26 )
 texture = ExtResource( 3 )
 
-[node name="Health" type="Node2D" parent="." instance=ExtResource( 1 )]
-script = ExtResource( 2 )
+[node name="Health" parent="." instance=ExtResource( 1 )]
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_hit"]
-[connection signal="heal" from="Health" to="Health" method="_on_Health_heal"]
-[connection signal="hit" from="Health" to="Health" method="_on_Health_hit"]
