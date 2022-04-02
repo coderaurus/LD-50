@@ -43,7 +43,7 @@ func _on_new_wave():
 			part = part.split(" ")
 			enemy_wave_left += int(part[0])
 	
-#	print("Split rules ", rules)
+	print("Split rules ", rules)
 	wave += 1
 	for i in $SpawnPoints.get_child_count():
 		$SpawnPoints.get_child(i).populate(rules[i])

@@ -31,16 +31,20 @@ func activate():
 	attacking = false
 	distance_travelled = 0
 	
-	if !on_path:
+	print("%s activate"% self.name)
+	if !on_path: # Wild aka beeline / Random -> beeline
+		print("   Wild or Random Wild")
 		_check_target()
-	elif followed_path.empty():
+	elif followed_path.empty(): # Random -> path
+		print("   Random Path")
 		var line = map.get_node("Road").get_child(rand_range(0, map.get_node("Road").get_child_count()))
 		followed_path = line.points
 		global_position = followed_path[0]
 		target = followed_path[1]
 #		print("Line ", line.name)
 #		print("On path", followed_path)
-	else:
+	elif on_path: # On path
+		print("   Random Path")
 		global_position = followed_path[0]
 		target = followed_path[1]
 	
