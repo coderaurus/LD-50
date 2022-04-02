@@ -31,6 +31,9 @@ wait_time = 0.5
 
 [node name="AttackCooldown" type="Timer" parent="."]
 
+[node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true
+
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_Enemy_hit"]
 [connection signal="timeout" from="AttackTime" to="." method="_on_attack"]

@@ -1,11 +1,14 @@
 extends KinematicBody2D
 
+signal hit
+signal dead
 
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 var speed = 100
 var velocity = Vector2.ZERO
+var vulnerable = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

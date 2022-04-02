@@ -4,6 +4,7 @@ signal hit
 signal dead
 
 export var on_path : bool = false
+
 var followed_path : Array = []
 
 # Declare member variables here. Examples:
@@ -12,10 +13,11 @@ var followed_path : Array = []
 var speed = 75
 var velocity = Vector2.ZERO
 var target
+var attack_target
 var target_pos : Vector2
 var path : Array
 var attacking : bool = false
-var attack_range = 16
+var attack_range = 24
 
 onready var world = get_tree().current_scene.get_node("World")
 onready var map = world.get_node("Map")
@@ -29,8 +31,8 @@ func _ready():
 		followed_path = line.points
 		global_position = followed_path[0]
 		target = followed_path[1]
-		print("Line ", line.name)
-		print("On path", followed_path)
+#		print("Line ", line.name)
+#		print("On path", followed_path)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -60,11 +62,12 @@ func navigate_and_move():
 	#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
 			path = map.get_simple_path(global_position, target_pos, false)
 #		print(path)
-	$PathVisual.points = path
+#	$PathVisual.points = path
 	
 	# Get path
 	if path.size() > 1:
 		velocity = global_position.direction_to(path[1]) * speed
+#		$RayCast2D.cast_to = velocity
 		# Reach point, pop it from the list
 		if global_position == path[1] or global_position.distance_to(path[1]) < 8:
 			path.pop_front()
@@ -82,12 +85,23 @@ func navigate_and_move():
 	# Move
 	velocity = move_and_slide(velocity)
 	if collision != null:
-		var distance = global_position.distance_to(collision.collider.global_position)
+#		print(collision.collider.name)
+		var distance = 1000
+#		var distance = global_position.distance_to(collision.collider.global_position)
 #		print("Distance to target", distance)
-		if !(target is Vector2) and collision.collider == target and distance <= attack_range:
-			if !attacking:
+		if  (!(target is Vector2) and collision.collider == target) or collision.collider.is_in_group("corpse"):
+#			print(collision.collider.name)
+			if collision.collider.is_in_group("corpse"):
+				distance = global_position.distance_to(collision.collider.global_position)
+#				print("Corpse targeted")
+				attack_target = collision.collider
+			else:
+#				print("not a corpse")
+				distance = global_position.distance_to(collision.collider.global_position)
+		
+			if distance <= attack_range and !attacking:
 				attacking = true
-				print("Attack")
+#				print("Attack")
 				$AttackTime.start()
 		
 	
@@ -101,17 +115,24 @@ func _on_dead():
 
 
 func _on_attack():
-	if is_instance_valid(target):
+	if attack_target == null or !is_instance_valid(attack_target):
+		if !(target is Vector2):
+			attack_target = target
+	
+	if is_instance_valid(attack_target):
 #		print("target ", target != null)
 #		print("me", global_position)
-		var distance = global_position.distance_to(target.global_position)
-		print(distance)
+		var distance = global_position.distance_to(attack_target.global_position)
+#		print(distance)
 		if  distance <= attack_range:
-			target.emit_signal("hit")
-			$AttackCooldown.start()
+			attack_target.emit_signal("hit")
+			if attack_target.get_node("Health").alive():
+				$AttackCooldown.start()
 		else:
-			print("Not attacking")
+#			print("Not attacking")
 			attacking = false
+	else:
+		attacking = false
 
 
 func _on_attack_cooldown():
