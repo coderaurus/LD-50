@@ -1,13 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/enemies/Enemy.tscn" type="PackedScene" id=2]
-[ext_resource path="res://gfx/phylactery.png" type="Texture" id=3]
+[ext_resource path="res://scenes/player/Phylactery.tscn" type="PackedScene" id=3]
 [ext_resource path="res://tiles/main_tiles.tres" type="TileSet" id=4]
-[ext_resource path="res://scenes/Health.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scripts/player/Phylactery.gd" type="Script" id=6]
-
-[sub_resource type="RectangleShape2D" id=1]
 
 [node name="Main" type="Node2D"]
 
@@ -38,15 +34,16 @@ tile_data = PoolIntArray( 9, 2, 0, 65537, 2, 0, 65538, 2, 0, 65539, 2, 0, 65545,
 
 [node name="Path" type="Line2D" parent="World/Map/Road"]
 position = Vector2( 1, 1 )
-points = PoolVector2Array( -1, 272, 559, 273, 559, 112 )
+points = PoolVector2Array( -45, 271, 559, 273, 559, 112 )
 
 [node name="Path2" type="Line2D" parent="World/Map/Road"]
 position = Vector2( 1, 0 )
-points = PoolVector2Array( 302, -4, 307, 177, 81, 176, 80, 102 )
+points = PoolVector2Array( 304, -43, 307, 177, 81, 176, 80, 102 )
 
 [node name="Enemies" type="Node2D" parent="World"]
 
 [node name="Enemy" parent="World/Enemies" instance=ExtResource( 2 )]
+on_path = true
 
 [node name="Camera2D" type="Camera2D" parent="World"]
 position = Vector2( 321, 158 )
@@ -54,21 +51,7 @@ current = true
 
 [node name="Phylacteries" type="Node2D" parent="World"]
 
-[node name="Phylactery" type="KinematicBody2D" parent="World/Phylacteries"]
-position = Vector2( 80, 70 )
-z_index = 5
-z_as_relative = false
-script = ExtResource( 6 )
+[node name="Phylactery" parent="World/Phylacteries" instance=ExtResource( 3 )]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Phylacteries/Phylactery"]
-position = Vector2( -1, -7 )
-shape = SubResource( 1 )
-
-[node name="Sprite" type="Sprite" parent="World/Phylacteries/Phylactery"]
-position = Vector2( -2, -26 )
-texture = ExtResource( 3 )
-
-[node name="Health" parent="World/Phylacteries/Phylactery" instance=ExtResource( 5 )]
-
-[connection signal="dead" from="World/Phylacteries/Phylactery" to="World/Phylacteries/Phylactery" method="_on_dead"]
-[connection signal="hit" from="World/Phylacteries/Phylactery" to="World/Phylacteries/Phylactery" method="_on_hit"]
+[node name="Phylactery2" parent="World/Phylacteries" instance=ExtResource( 3 )]
+position = Vector2( 560, 84 )

@@ -3,6 +3,9 @@ extends KinematicBody2D
 signal hit
 signal dead
 
+export var on_path : bool = false
+var followed_path : Array = []
+
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -19,7 +22,15 @@ onready var map = world.get_node("Map")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	choose_target()
+	if !on_path:
+		_check_target()
+	else:
+		var line = map.get_node("Road").get_child(rand_range(0, map.get_node("Road").get_child_count()))
+		followed_path = line.points
+		global_position = followed_path[0]
+		target = followed_path[1]
+		print("Line ", line.name)
+		print("On path", followed_path)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -30,37 +41,42 @@ func _physics_process(delta):
 		navigate_and_move()
 
 func _check_target():
-	if !is_instance_valid(target):
+	if !is_instance_valid(target) and !on_path:
 		if world.get_node("Phylacteries").get_child_count() > 0:
 			target = world.get_node("Phylacteries").get_child(0)
 		elif world.get_node("Player") != null:
 			target = world.get_node("Player")
 
 
-func choose_target():
-	# Check for closest phylactery
-	
-	# If none available, target player
-#	target = world.get_node("Player")
-	_check_target()
-
-
 func navigate_and_move():
-	if target.global_position != target_pos:
-		target_pos = target.global_position
-#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
-		path = map.get_simple_path(global_position, target_pos, false)
-		
+	if !on_path:
+		if target.global_position != target_pos:
+			target_pos = target.global_position
+	#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
+			path = map.get_simple_path(global_position, target_pos, false)
+	else:
+		if target != target_pos:
+			target_pos = target
+	#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
+			path = map.get_simple_path(global_position, target_pos, false)
 #		print(path)
 	$PathVisual.points = path
 	
 	# Get path
-	if path.size() > 0:
+	if path.size() > 1:
 		velocity = global_position.direction_to(path[1]) * speed
 		# Reach point, pop it from the list
 		if global_position == path[1] or global_position.distance_to(path[1]) < 8:
 			path.pop_front()
-			
+	elif on_path:
+		if followed_path.size() > 1:
+			followed_path.pop_front()
+			if followed_path.size() > 1:
+				target = followed_path[1]
+		else:
+			on_path = false
+			_check_target()
+		
 	# Test collision
 	var collision = move_and_collide(velocity, true, true, true)
 	# Move
@@ -68,7 +84,7 @@ func navigate_and_move():
 	if collision != null:
 		var distance = global_position.distance_to(collision.collider.global_position)
 #		print("Distance to target", distance)
-		if collision.collider == target and distance <= attack_range:
+		if !(target is Vector2) and collision.collider == target and distance <= attack_range:
 			if !attacking:
 				attacking = true
 				print("Attack")
