@@ -4,6 +4,12 @@ signal hit
 signal dead
 
 
+func _process(delta):
+	if $Health.health_missing() == 0 and !$HealTooltip.visible:
+		$AnimationPlayer.advance(0)
+		$AnimationPlayer.play("Hide Heal Tip")
+
+
 func show_health():
 	$Health.show_health()
 

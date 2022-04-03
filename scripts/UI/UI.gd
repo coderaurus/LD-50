@@ -5,10 +5,39 @@ extends CanvasLayer
 # var a = 2
 # var b = "text"
 
+onready var music_player = $"../MusicPlayer"
+onready var sound_player = $"../SoundPlayer"
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$FadeScreen.visible = false
+	$Menu/Label.text = "Mortals await.."
+	$Menu/Resume.text = "Start!"
+	$Menu/Resume.grab_focus()
+
+func fade_out():
+	$FadeScreen/AnimationPlayer.advance(0)
+	$FadeScreen/AnimationPlayer.play("FadeOut")
+#	yield($FadeScreen/AnimationPlayer,"animation_finished")
+
+func fade_in():
+	$FadeScreen/AnimationPlayer.advance(0)
+	$FadeScreen/AnimationPlayer.play("FadeIn")
+#	yield($FadeScreen/AnimationPlayer,"animation_finished")
+
+
+func toggle_menu():
+	if $Menu.visible:
+		$Menu.hide()
+		get_tree().paused = false
+		if !get_parent().game_started:
+			get_parent().game_started = false
+			$Menu/Label.text = "Mortals wait.."
+			$Menu/Resume.text = "Resume"
+	else:
+		$Menu.show()
+		get_tree().paused = true
 
 
 func hide_reload():
@@ -30,3 +59,8 @@ func show_reload(level_clear, score, next_level = false):
 	else:
 		$"Reload Panel/NextLevel".hide()
 		$"Reload Panel/Reload".grab_focus()
+		
+func show_victory(score):
+	$"Victory screen".show()
+	yield(get_tree().create_timer(1.0), "timeout")
+	$"Victory screen/Final score".text = "Your final score: %s" % score

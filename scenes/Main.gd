@@ -4,6 +4,7 @@ extends Node2D
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
+var game_started = false
 var game_over = false
 var level_complete = false
 var game_paused = false
@@ -13,7 +14,13 @@ var score = 0
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
-	pass # Replace with function body.
+	get_tree().paused = true
+	show_souls($World.get_node("Player").souls)
+	add_score(0)
+	
+func _process(delta):
+	if Input.is_action_just_pressed("ui_home"):
+		$UI.toggle_menu()
 
 
 func game_over():
@@ -31,21 +38,36 @@ func level_clear():
 	if $World.current_map < $World.map_paths.size() -1:
 		$UI.show_reload(level_complete, score, true)
 	else:
-		$UI.show_reload(level_complete, score)
+		$UI.show_victory(score)
 
 func add_score(amount):
 	score += amount
+	$UI/Score.text = "%sp" % score 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
 
 
-func _on_Reload():
-	get_tree().reload_current_scene()
+func show_souls(amount):
+	$UI/Souls.text = "Souls: %s" % amount
+
+
+func show_waves(current, total):
+	$UI/Waves.text = "Wave %s/%s" % [current, total]
+
+
+func _on_reload():
+	level_complete = false
+	$World.reload_map()
 	get_tree().paused = false
 
 
 func _on_next_level():
 	$UI.hide_reload()
+	level_complete = false
 	$World.load_next_map()
+
+
+func _on_play_again():
+	get_tree().reload_current_scene()

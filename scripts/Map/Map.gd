@@ -69,3 +69,5 @@ func _on_new_wave():
 		print(i)
 		if rules.size() > i:
 			$SpawnPoints.get_child(i).populate(rules[i])
+	get_tree().current_scene.show_waves(wave, waves)
+	

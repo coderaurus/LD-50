@@ -37,6 +37,12 @@ func _process(delta):
 	
 	if velocity != Vector2.ZERO:
 		velocity.normalized()
+		
+		if velocity.x > 0 and $Sprite.flip_h:
+			$Sprite.flip_h = false
+		elif velocity.x < 0 and !$Sprite.flip_h:
+			$Sprite.flip_h = true
+			 
 	
 func _physics_process(delta):
 	move_and_slide(velocity * speed)
@@ -48,6 +54,7 @@ func heal_phylactery():
 	if missing > 0 and souls >= missing:
 		souls -= missing
 		phyla.get_node("Health").emit_signal("heal", missing)
+		get_tree().current_scene.show_souls(souls)
 
 
 func show_health():
@@ -69,3 +76,4 @@ func is_vulnerable():
 
 func _on_enemy_down():
 	souls += 1
+	get_tree().current_scene.show_souls(souls)

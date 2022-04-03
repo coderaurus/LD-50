@@ -17,10 +17,24 @@ func _ready():
 	load_next_map()
 	pass # Replace with function body.
 
+
+func reload_map():
+	get_parent().get_node("UI").fade_out()
+	yield(get_parent().get_node("UI").get_node("FadeScreen/AnimationPlayer"), "animation_finished")
+	clear_map()
+	load_current_map()
+
+
 func load_next_map():
+	if get_parent().game_started:
+		get_parent().get_node("UI").fade_out()
+		yield(get_parent().get_node("UI").get_node("FadeScreen/AnimationPlayer"), "animation_finished")
 	clear_map()
 	current_map += 1
-	
+	load_current_map()
+
+
+func load_current_map():
 	# Add map to world
 	var map = load(map_paths[current_map])
 	map = map.instance()
@@ -38,7 +52,7 @@ func load_next_map():
 		add_child(player)
 	
 	# Place player
-	var player_pos = map.get_node_or_null("PlayerCoords")
+	var player_pos = map.get_node_or_null("PlayerCoord")
 	if player_pos != null:
 		print("  Set player position")
 		player.global_position = player_pos.global_position
@@ -53,14 +67,16 @@ func load_next_map():
 	
 
 #	print("Did we add map ", get_node("Map"))
-	
+	if get_parent().game_started:
+		get_parent().get_node("UI").fade_in()
+		yield(get_parent().get_node("UI").get_node("FadeScreen/AnimationPlayer"), "animation_finished")
 	# Start map
 	get_tree().paused = false
 	map.start_map()
-	
+
+
 
 func clear_map():
-		
 	for phyla in $Phylacteries.get_children():
 		phyla.queue_free()
 	

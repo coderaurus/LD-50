@@ -60,6 +60,11 @@ func _physics_process(delta):
 		_check_target()
 		if !attacking:
 			navigate_and_move()
+			
+			if velocity.x > 0 and $Sprite.flip_h:
+				$Sprite.flip_h = false
+			elif velocity.x < 0 and !$Sprite.flip_h:
+				$Sprite.flip_h = true
 
 func _check_target():
 #	print("Target valid %s " % is_instance_valid(target))
@@ -130,8 +135,7 @@ func navigate_and_move():
 			attacking = true
 			attack_target = collider
 			$AttackTime.start(0)
-	
-	
+
 
 func _on_Enemy_hit():
 	$Health.emit_signal("hit")
@@ -141,6 +145,7 @@ func _on_dead():
 	var c = corpse.instance()
 	c.global_position = global_position
 	world.get_node("Corpses").add_child(c)
+	c.get_node("Sprite").flip_h = $Sprite.flip_h
 	get_tree().current_scene.get_node("World").get_node("Maps").get_child(0).emit_signal("enemy_down")
 	world.get_node("Player").emit_signal("enemy_down")
 	queue_free()

@@ -9,6 +9,7 @@ func song_playing(song):
 			return true
 	return false
 
+
 func mute_music():
 	volume_db = -80
 	
