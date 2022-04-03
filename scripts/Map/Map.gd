@@ -63,10 +63,9 @@ func _on_new_wave():
 			part = part.split(" ")
 			enemy_wave_left += int(part[0])
 	
-	print("Split rules ", rules)
+#	print("Split rules ", rules)
 	wave += 1
 	for i in range($SpawnPoints.get_child_count()):
-		print(i)
 		if rules.size() > i:
 			$SpawnPoints.get_child(i).populate(rules[i])
 	get_tree().current_scene.show_waves(wave, waves)

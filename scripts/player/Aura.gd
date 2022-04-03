@@ -11,7 +11,7 @@ var phylactery_in_aura = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$AnimationPlayer.play("Pulse")
 
 
 func _on_aura_tick():
@@ -25,7 +25,7 @@ func _on_body_entered(body):
 		enemies_in_aura.append(body)
 #		body.emit_signal("hit")
 	elif body.is_in_group("phylactery"):
-		print("Phylactery in range")
+#		print("Phylactery in range")
 		phylactery_in_aura = body
 		if body.get_node("Health").health_missing() > 0:
 			body.get_node("AnimationPlayer").play("Show Heal Tip")

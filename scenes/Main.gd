@@ -1,9 +1,6 @@
 extends Node2D
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 var game_started = false
 var game_over = false
 var level_complete = false
@@ -17,6 +14,8 @@ func _ready():
 	get_tree().paused = true
 	show_souls($World.get_node("Player").souls)
 	add_score(0)
+	yield($MusicPlayer, "tree_entered")
+	$MusicPlayer.song("main")
 	
 func _process(delta):
 	if Input.is_action_just_pressed("ui_home"):
@@ -37,8 +36,10 @@ func level_clear():
 	level_complete = true
 	if $World.current_map < $World.map_paths.size() -1:
 		$UI.show_reload(level_complete, score, true)
+		$MusicPlayer.song("level_clear")
 	else:
 		$UI.show_victory(score)
+		$MusicPlayer.song("victory")
 
 func add_score(amount):
 	score += amount
@@ -58,16 +59,19 @@ func show_waves(current, total):
 
 
 func _on_reload():
+	$SoundPlayer.sound("click")
 	level_complete = false
 	$World.reload_map()
 	get_tree().paused = false
 
 
 func _on_next_level():
+	$SoundPlayer.sound("click")
 	$UI.hide_reload()
 	level_complete = false
 	$World.load_next_map()
 
 
 func _on_play_again():
+	$SoundPlayer.sound("click")
 	get_tree().reload_current_scene()

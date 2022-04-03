@@ -1,10 +1,66 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scripts/enemies/Enemy.gd" type="Script" id=1]
 [ext_resource path="res://gfx/enemy.png" type="Texture" id=2]
 [ext_resource path="res://scenes/Health.tscn" type="PackedScene" id=3]
+[ext_resource path="res://animations/enemies/idle.tres" type="Animation" id=4]
 
 [sub_resource type="CircleShape2D" id=1]
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( -4, -19 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "attack"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.7 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 2, 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( -1, -19 ), Vector2( 0, -19 ), Vector2( 0, -19 ) ]
+}
 
 [node name="Enemy" type="KinematicBody2D" groups=["enemy"]]
 position = Vector2( 39, 280 )
@@ -18,9 +74,10 @@ z_index = 5
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0, -19 )
+position = Vector2( -4, -19 )
 z_index = 2
 texture = ExtResource( 2 )
+hframes = 3
 
 [node name="PathVisual" type="Line2D" parent="."]
 visible = false
@@ -45,7 +102,11 @@ collision_mask = 10
 
 [node name="Health" parent="." instance=ExtResource( 3 )]
 position = Vector2( -9, -29 )
-max_hp = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Idle = ExtResource( 4 )
+anims/RESET = SubResource( 3 )
+anims/attack = SubResource( 4 )
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_Enemy_hit"]

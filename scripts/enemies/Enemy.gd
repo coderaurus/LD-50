@@ -10,7 +10,7 @@ var followed_path : Array = []
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var speed = 75
+var speed = 55
 var velocity = Vector2.ZERO
 var target
 var attack_target
@@ -52,6 +52,7 @@ func activate():
 		target = followed_path[1]
 #	print("[%s] Targetting %s" % [self.name, target])
 	$RespawnTimer.start()
+	$AnimationPlayer.play("Idle")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -77,7 +78,7 @@ func _check_target():
 				if distance < closest_distance:
 					closest_distance = distance
 					closest_phyla = phyla
-			print("Closest phyla % ", closest_phyla)
+#			print("Closest phyla % ", closest_phyla)
 			target = closest_phyla
 		elif world.get_node_or_null("Player") != null:
 			target = world.get_node("Player")
@@ -109,9 +110,9 @@ func navigate_and_move():
 	# Get path
 	if path.size() > 1:
 		velocity = global_position.direction_to(path[1]) * speed
-		$RayCast2D.cast_to = velocity
-		$RayCast2D.cast_to.x = clamp($RayCast2D.cast_to.x/2, -42, 42)
-		$RayCast2D.cast_to.y = clamp($RayCast2D.cast_to.y/2, -42, 42)
+		$RayCast2D.cast_to = velocity * 0.2
+#		$RayCast2D.cast_to.x = clamp($RayCast2D.cast_to.x/2, -42, 42)
+#		$RayCast2D.cast_to.y = clamp($RayCast2D.cast_to.y/2, -42, 42)
 		
 #		print($RayCast2D.cast_to)
 		# Reach point, pop it from the list
@@ -134,10 +135,13 @@ func navigate_and_move():
 		if collider.is_in_group("phylactery") or collider.is_in_group("corpse") or (collider.name == "Player" and collider.is_vulnerable()):
 			attacking = true
 			attack_target = collider
-			$AttackTime.start(0)
+			$AttackTime.start()
+			$AnimationPlayer.advance(0)
+			$AnimationPlayer.play("attack")
 
 
 func _on_Enemy_hit():
+	get_tree().current_scene.get_node("SoundPlayer").sound("enemy_hit")
 	$Health.emit_signal("hit")
 
 
@@ -147,6 +151,7 @@ func _on_dead():
 	world.get_node("Corpses").add_child(c)
 	c.get_node("Sprite").flip_h = $Sprite.flip_h
 	get_tree().current_scene.get_node("World").get_node("Maps").get_child(0).emit_signal("enemy_down")
+	get_tree().current_scene.get_node("SoundPlayer").sound("enemy_death")
 	world.get_node("Player").emit_signal("enemy_down")
 	queue_free()
 
@@ -164,6 +169,8 @@ func _on_attack():
 func _on_attack_cooldown():
 	if $RayCast2D.get_collider() != null:
 		$AttackTime.start()
+		$AnimationPlayer.advance(0)
+		$AnimationPlayer.play("attack")
 	else:
 		attacking = false
 

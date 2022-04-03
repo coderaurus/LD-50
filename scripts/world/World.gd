@@ -54,7 +54,7 @@ func load_current_map():
 	# Place player
 	var player_pos = map.get_node_or_null("PlayerCoord")
 	if player_pos != null:
-		print("  Set player position")
+#		print("  Set player position")
 		player.global_position = player_pos.global_position
 		
 	# Place phylacteries
@@ -73,6 +73,7 @@ func load_current_map():
 	# Start map
 	get_tree().paused = false
 	map.start_map()
+	get_parent().get_node("MusicPlayer").song("main")
 
 
 

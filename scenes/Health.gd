@@ -19,7 +19,7 @@ func _on_Health_hit():
 #	print("%s got hit" % get_parent().name)
 	current_hp -= 1
 	$Health2.text = str(current_hp)
-	
+	$AnimationPlayer.stop()
 	$AnimationPlayer.play("Pop")
 	
 #	print("%s has %s hp" % [get_parent().name, current_hp])

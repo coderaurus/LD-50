@@ -37,7 +37,7 @@ func populate(var rules = []):
 #	print("[%s] Spawn rules " % self.name, spawn_rules)
 #	spawns_per_wave = spawns
 	spawned = 0
-	print("[%s] Spawns this wave " % self.name, spawns_per_wave)
+#	print("[%s] Spawns this wave " % self.name, spawns_per_wave)
 	$SpawnTimer.start()
 
 func _on_spawn():
@@ -48,12 +48,12 @@ func _on_spawn():
 	match spawn_rules[spawned]:
 		"path": # follow the road
 			e.on_path = true
-			print("World -> map ", world.get_node("Map"))
+#			print("World -> map ", world.get_node("Map"))
 #			if world.get_node_or_null("Map") == null:
 #				var m = get_tree().current_scene.find_node("Map")
 ##				print(m.get_path())
-			print("Map:  ", world.get_node_or_null("Map"))
-			print("Road: ", world.get_node_or_null("Road"))
+#			print("Map:  ", world.get_node_or_null("Map"))
+#			print("Road: ", world.get_node_or_null("Road"))
 			e.followed_path = world.get_node("Maps").get_child(0).get_node("Road").get_child(initial_index).points
 			e.global_position = e.followed_path[0]
 #			print("Matching Path")
@@ -72,17 +72,17 @@ func _on_spawn():
 	var phyla_count = world.get_node("Phylacteries").get_child_count() 
 #	if  phyla_count > 0 and phyla_count > initial_index:
 	if  phyla_count > 0:
-		print("  Phylacteries %s | Initial index %s" % [phyla_count, initial_index])
+#		print("  Phylacteries %s | Initial index %s" % [phyla_count, initial_index])
 		var alternative_phyla
 		if phyla_count < initial_index:
 			alternative_phyla = world.get_node("Phylacteries").get_child(phyla_count-1)
 			e.target = alternative_phyla
 		else:
 			e.target = world.get_node("Phylacteries").get_child(initial_index)
-		print("  Target %s" % e.target)
+#		print("  Target %s" % e.target)
 	
 	world.get_node("Enemies").add_child(e)
-	print("Currently there are %s enemies" % world.get_node("Enemies").get_child_count())
+#	print("Currently there are %s enemies" % world.get_node("Enemies").get_child_count())
 	e.activate()
 	
 	spawned += 1

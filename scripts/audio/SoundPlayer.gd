@@ -3,11 +3,21 @@ extends AudioStreamPlayer
 
 export var sounds : Dictionary = {}
 
+func toggle() -> bool:
+	if volume_db == -80:
+		unmute_sounds()
+		return true
+	else:
+		mute_sounds()
+		return false
+
+
 func mute_sounds():
 	volume_db = -80
 	
 func unmute_sounds():
-	volume_db = -20
+	volume_db = 0
+	sound("click")
 
 func sound(sfx_name = ""):
 	if sounds.has(sfx_name):
@@ -26,3 +36,8 @@ func play(from_position=0.0, volume = -80 ):
 	asp.play()
 	yield(asp, "finished")
 	asp.queue_free()
+
+
+func _on_range_changed(value):
+	volume_db = value
+	sound("click")

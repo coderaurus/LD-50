@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://scenes/player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://fonts/baseFont.tres" type="DynamicFont" id=2]
@@ -13,6 +13,16 @@
 [ext_resource path="res://gfx/other/logo.png" type="Texture" id=11]
 [ext_resource path="res://animations/ui/FadeOut.tres" type="Animation" id=12]
 [ext_resource path="res://animations/ui/FadeIn.tres" type="Animation" id=13]
+[ext_resource path="res://sfx/enemy_hit.wav" type="AudioStream" id=14]
+[ext_resource path="res://sfx/enemy_death.wav" type="AudioStream" id=15]
+[ext_resource path="res://sfx/phylactery_heal.wav" type="AudioStream" id=16]
+[ext_resource path="res://sfx/click.wav" type="AudioStream" id=17]
+[ext_resource path="res://sfx/phylactery_death.wav" type="AudioStream" id=18]
+[ext_resource path="res://sfx/phylactery_hit.wav" type="AudioStream" id=19]
+[ext_resource path="res://sfx/player_death.wav" type="AudioStream" id=20]
+[ext_resource path="res://ost/victory.ogg" type="AudioStream" id=21]
+[ext_resource path="res://ost/main_loop.ogg" type="AudioStream" id=22]
+[ext_resource path="res://ost/level_clear.ogg" type="AudioStream" id=23]
 
 [sub_resource type="DynamicFont" id=3]
 size = 8
@@ -233,8 +243,8 @@ margin_top = 8.0
 margin_right = 139.0
 margin_bottom = 20.0
 min_value = -80.0
-max_value = -20.0
-value = -20.0
+max_value = 0.0
+step = 5.0
 
 [node name="Toggle" type="Button" parent="UI/Menu/Music"]
 margin_left = 80.0
@@ -266,8 +276,8 @@ margin_top = 8.0
 margin_right = 139.0
 margin_bottom = 20.0
 min_value = -80.0
-max_value = -20.0
-value = -20.0
+max_value = 0.0
+step = 5.0
 
 [node name="Toggle" type="Button" parent="UI/Menu/Sound"]
 margin_left = 80.0
@@ -378,12 +388,32 @@ anims/RESET = SubResource( 6 )
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 script = ExtResource( 7 )
+ost = {
+"level_clear": ExtResource( 23 ),
+"main": ExtResource( 22 ),
+"victory": ExtResource( 21 )
+}
 
 [node name="SoundPlayer" type="AudioStreamPlayer" parent="."]
 script = ExtResource( 5 )
+sounds = {
+"click": ExtResource( 17 ),
+"enemy_death": ExtResource( 15 ),
+"enemy_hit": ExtResource( 14 ),
+"phylactery_death": ExtResource( 18 ),
+"phylactery_heal": ExtResource( 16 ),
+"phylactery_hit": ExtResource( 19 ),
+"player_death": ExtResource( 20 )
+}
 
 [connection signal="phylac_down" from="World/Phylacteries" to="World/Phylacteries" method="_on_phylac_down"]
 [connection signal="pressed" from="UI/Reload Panel/Reload" to="." method="_on_reload"]
 [connection signal="pressed" from="UI/Reload Panel/NextLevel" to="." method="_on_next_level"]
 [connection signal="pressed" from="UI/Menu/Resume" to="UI" method="toggle_menu"]
+[connection signal="value_changed" from="UI/Menu/Music/HScrollBar" to="UI" method="_on_music_range_change"]
+[connection signal="value_changed" from="UI/Menu/Music/HScrollBar" to="MusicPlayer" method="_on_range_change"]
+[connection signal="pressed" from="UI/Menu/Music/Toggle" to="UI" method="_on_music_toggle"]
+[connection signal="value_changed" from="UI/Menu/Sound/HScrollBar" to="UI" method="_on_sound_range_change"]
+[connection signal="value_changed" from="UI/Menu/Sound/HScrollBar" to="SoundPlayer" method="_on_range_changed"]
+[connection signal="pressed" from="UI/Menu/Sound/Toggle" to="UI" method="_on_sound_toggle"]
 [connection signal="pressed" from="UI/Victory screen/PlayAgain" to="." method="_on_play_again"]

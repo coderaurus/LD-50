@@ -12,11 +12,11 @@ var speed = 100
 var velocity = Vector2.ZERO
 var vulnerable = false
 
-var souls = 5 
+var souls = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$AnimationPlayer.play("Idle")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -54,6 +54,7 @@ func heal_phylactery():
 	if missing > 0 and souls >= missing:
 		souls -= missing
 		phyla.get_node("Health").emit_signal("heal", missing)
+		get_tree().current_scene.get_node("SoundPlayer").sound("phylactery_heal")
 		get_tree().current_scene.show_souls(souls)
 
 
@@ -66,6 +67,7 @@ func _on_hit():
 
 
 func _on_dead():
+	get_tree().current_scene.get_node("SoundPlayer").sound("player_death")
 	get_tree().current_scene.game_over()
 	queue_free()
 

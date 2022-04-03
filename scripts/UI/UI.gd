@@ -38,6 +38,7 @@ func toggle_menu():
 	else:
 		$Menu.show()
 		get_tree().paused = true
+	sound_player.sound("click")
 
 
 func hide_reload():
@@ -64,3 +65,36 @@ func show_victory(score):
 	$"Victory screen".show()
 	yield(get_tree().create_timer(1.0), "timeout")
 	$"Victory screen/Final score".text = "Your final score: %s" % score
+
+
+func _on_sound_toggle():
+	if sound_player.toggle():
+		$Menu/Sound/Toggle.text = "On"
+		$Menu/Sound/HScrollBar.value = $Menu/Sound/HScrollBar.max_value
+	else:
+		$Menu/Sound/Toggle.text = "Off"
+		$Menu/Sound/HScrollBar.value = $Menu/Sound/HScrollBar.min_value
+
+
+func _on_sound_range_change(value):
+	if value > -80:
+		$Menu/Sound/Toggle.text = "On"
+	else:
+		$Menu/Sound/Toggle.text = "Off"
+		
+		
+func _on_music_toggle():
+	if music_player.toggle():
+		$Menu/Music/Toggle.text = "On"
+		$Menu/Music/HScrollBar.value = $Menu/Music/HScrollBar.max_value
+	else:
+		$Menu/Music/Toggle.text = "Off"
+		$Menu/Music/HScrollBar.value = $Menu/Music/HScrollBar.max_value
+
+
+func _on_music_range_change(value):
+	if value != -80:
+		$Menu/Music/Toggle.text = "On"
+	else:
+		$Menu/Music/Toggle.text = "Off"
+
