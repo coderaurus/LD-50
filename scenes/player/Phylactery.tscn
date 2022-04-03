@@ -23,6 +23,8 @@ position = Vector2( -2, -26 )
 texture = ExtResource( 3 )
 
 [node name="Health" parent="." instance=ExtResource( 1 )]
+position = Vector2( -8, -43 )
+max_hp = 6
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_hit"]

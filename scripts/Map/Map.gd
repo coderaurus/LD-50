@@ -10,8 +10,11 @@ var enemy_wave_left = 10
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$NewWaveTimer.start()
 	waves = wave_info.size()
+
+func start_map():
+	show_current_healths()
+	$NewWaveTimer.start()
 
 
 func _on_enemy_down():
@@ -25,9 +28,16 @@ func _on_enemy_down():
 func _wave_clear():
 #	print("Wave clear")
 	if wave < waves:
+		show_current_healths()
 		$NewWaveTimer.start()
 	else:
 		get_tree().current_scene.level_clear()
+
+
+func show_current_healths():
+	for phyla in get_parent().get_node("Phylacteries").get_children():
+		phyla.show_health()
+	get_parent().get_node("Player").show_health()
 
 
 func _on_new_wave():
@@ -45,5 +55,7 @@ func _on_new_wave():
 	
 	print("Split rules ", rules)
 	wave += 1
-	for i in $SpawnPoints.get_child_count():
-		$SpawnPoints.get_child(i).populate(rules[i])
+	for i in range($SpawnPoints.get_child_count()):
+		print(i)
+		if rules.size() > i:
+			$SpawnPoints.get_child(i).populate(rules[i])

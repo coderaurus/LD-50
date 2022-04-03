@@ -37,7 +37,7 @@ func populate(var rules = []):
 #	print("[%s] Spawn rules " % self.name, spawn_rules)
 #	spawns_per_wave = spawns
 	spawned = 0
-#	print("[%s] Spawns this wave " % self.name, spawns_per_wave)
+	print("[%s] Spawns this wave " % self.name, spawns_per_wave)
 	$SpawnTimer.start()
 
 func _on_spawn():
@@ -48,6 +48,7 @@ func _on_spawn():
 	match spawn_rules[spawned]:
 		"path": # follow the road
 			e.on_path = true
+			print("World -> map ", world.get_node("Map"))
 			e.followed_path = world.get_node("Map").get_node("Road").get_child(initial_index).points
 			e.global_position = e.followed_path[0]
 #			print("Matching Path")
@@ -68,6 +69,7 @@ func _on_spawn():
 		e.target = world.get_node("Phylacteries").get_child(initial_index)
 	
 	world.get_node("Enemies").add_child(e)
+	print("Currently there are %s enemies" % world.get_node("Enemies").get_child_count())
 	e.activate()
 	
 	spawned += 1

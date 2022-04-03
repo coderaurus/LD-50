@@ -2,6 +2,8 @@ extends KinematicBody2D
 
 signal hit
 signal dead
+signal enemy_down
+
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -9,6 +11,8 @@ signal dead
 var speed = 100
 var velocity = Vector2.ZERO
 var vulnerable = false
+
+var souls = 0 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,6 +39,10 @@ func _physics_process(delta):
 	move_and_slide(velocity * speed)
 
 
+func show_health():
+	$Health/AnimationPlayer.play("Show")
+
+
 func _on_hit():
 	$Health.emit_signal("hit")
 
@@ -46,3 +54,7 @@ func _on_dead():
 
 func is_vulnerable():
 	return vulnerable
+
+
+func _on_enemy_down():
+	souls += 1

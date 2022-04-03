@@ -27,10 +27,11 @@ width = 5.0
 default_color = Color( 1, 0.211765, 0, 1 )
 
 [node name="Health" parent="." instance=ExtResource( 3 )]
+position = Vector2( -9, -30 )
 max_hp = 3
 
 [node name="AttackTime" type="Timer" parent="."]
-wait_time = 0.1
+wait_time = 0.2
 one_shot = true
 
 [node name="AttackCooldown" type="Timer" parent="."]

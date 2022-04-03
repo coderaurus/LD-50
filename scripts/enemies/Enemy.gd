@@ -25,6 +25,9 @@ onready var world = get_tree().current_scene.get_node("World")
 onready var map = world.get_node("Map")
 onready var corpse = preload("res://scenes/corpses/Corpse.tscn")
 
+func _ready():
+	$Health/AnimationPlayer.play("Hide")
+
 # Called when the node enters the scene tree for the first time.
 func activate():
 	respawn_point = global_position
@@ -132,6 +135,7 @@ func _on_dead():
 	c.global_position = global_position
 	world.get_node("Corpses").add_child(c)
 	get_tree().current_scene.get_node("World").get_node("Map").emit_signal("enemy_down")
+	world.get_node("Player").emit_signal("enemy_down")
 	queue_free()
 
 
