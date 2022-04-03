@@ -8,6 +8,7 @@
 
 [node name="Enemy" type="KinematicBody2D" groups=["enemy"]]
 position = Vector2( 39, 280 )
+z_index = 5
 collision_layer = 4
 collision_mask = 11
 script = ExtResource( 1 )
@@ -26,10 +27,6 @@ z_as_relative = false
 width = 5.0
 default_color = Color( 1, 0.211765, 0, 1 )
 
-[node name="Health" parent="." instance=ExtResource( 3 )]
-position = Vector2( -9, -30 )
-max_hp = 3
-
 [node name="AttackTime" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
@@ -43,6 +40,10 @@ wait_time = 10.0
 [node name="RayCast2D" type="RayCast2D" parent="."]
 enabled = true
 collision_mask = 10
+
+[node name="Health" parent="." instance=ExtResource( 3 )]
+position = Vector2( -9, -29 )
+max_hp = 3
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_Enemy_hit"]
