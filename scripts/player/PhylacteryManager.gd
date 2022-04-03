@@ -17,7 +17,10 @@ func _ready():
 
 
 func _on_phylac_down():
-	if get_child_count() == 0:
+	#	print("Phylac down | children: %s " % get_child_count())
+
+	# -1 for the phylac node which hasn't been freed yet
+	if get_child_count() - 1 == 0:
 		var p = get_parent().get_node_or_null("Player")
 		if p != null:
 			p.vulnerable = true
