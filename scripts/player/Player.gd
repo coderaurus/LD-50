@@ -42,3 +42,7 @@ func _on_hit():
 func _on_dead():
 	get_tree().current_scene.game_over()
 	queue_free()
+
+
+func is_vulnerable():
+	return vulnerable

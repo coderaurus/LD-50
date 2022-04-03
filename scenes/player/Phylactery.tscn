@@ -6,10 +6,12 @@
 
 [sub_resource type="RectangleShape2D" id=1]
 
-[node name="Phylactery" type="KinematicBody2D"]
+[node name="Phylactery" type="KinematicBody2D" groups=["phylactery"]]
 position = Vector2( 80, 70 )
 z_index = 5
 z_as_relative = false
+collision_layer = 2
+collision_mask = 0
 script = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

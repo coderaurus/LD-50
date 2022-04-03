@@ -31,12 +31,12 @@ func activate():
 	attacking = false
 	distance_travelled = 0
 	
-	print("%s activate"% self.name)
+#	print("%s activate"% self.name)
 	if !on_path: # Wild aka beeline / Random -> beeline
-		print("   Wild or Random Wild")
+#		print("   Wild or Random Wild")
 		_check_target()
 	elif followed_path.empty(): # Random -> path
-		print("   Random Path")
+#		print("   Random Path")
 		var line = map.get_node("Road").get_child(rand_range(0, map.get_node("Road").get_child_count()))
 		followed_path = line.points
 		global_position = followed_path[0]
@@ -44,10 +44,10 @@ func activate():
 #		print("Line ", line.name)
 #		print("On path", followed_path)
 	elif on_path: # On path
-		print("   Random Path")
+#		print("   Random Path")
 		global_position = followed_path[0]
 		target = followed_path[1]
-	
+	print("[%s] Targetting %s" % [self.name, target])
 	$RespawnTimer.start()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -61,9 +61,19 @@ func _physics_process(delta):
 func _check_target():
 	if !is_instance_valid(target) and !on_path:
 		if world.get_node("Phylacteries").get_child_count() > 0:
-			target = world.get_node("Phylacteries").get_child(0)
+			var closest_distance = 10000
+			var closest_phyla
+			for phyla in world.get_node("Phylacteries").get_children():
+				var distance = global_position.distance_to(phyla.global_position)
+				if distance < closest_distance:
+					closest_distance = distance
+					closest_phyla = phyla
+			target = closest_phyla
 		elif world.get_node_or_null("Player") != null:
 			target = world.get_node("Player")
+			
+	if $RayCast2D.get_collider() == null and attacking:
+		attacking = false
 		
 
 
@@ -106,9 +116,10 @@ func navigate_and_move():
 	var collider = $RayCast2D.get_collider()
 	if collider != null and !attacking:
 #		print("[%s] Attack %s " % [self.name, collider.name])
-		attacking = true
-		attack_target = collider
-		$AttackTime.start(0)
+		if collider.is_in_group("phylactery") or collider.is_in_group("corpse") or (collider.name == "Player" and collider.is_vulnerable()):
+			attacking = true
+			attack_target = collider
+			$AttackTime.start(0)
 	
 	
 
@@ -127,15 +138,16 @@ func _on_dead():
 func _on_attack():
 #	print("Me", self)
 	distance_travelled += 75
-#	
+	if is_instance_valid(attack_target):
 #	print("%s Attack %s" % [self.name, attack_target])
-	attack_target.emit_signal("hit")
-	if attack_target.get_node("Health").alive():
-		$AttackCooldown.start()
+		attack_target.emit_signal("hit")
+		if attack_target.get_node("Health").alive():
+			$AttackCooldown.start()
 
 
 func _on_attack_cooldown():
-	if $RayCast2D.collider != null:
+	print("On atk cd")
+	if $RayCast2D.get_collider() != null:
 		$AttackTime.start()
 	else:
 		attacking = false
@@ -144,7 +156,7 @@ func _on_attack_cooldown():
 func _on_stuck_check():
 	# Enemy stuck, respawn
 	print("Travelled distance ", distance_travelled)
-#	print("  Attacking: %s | On path: %s" % [attacking, on_path])
+	print("  Attacking: %s | On path: %s" % [attacking, on_path])
 #	print("  Spawning back at %s" % respawn_point)
 	if distance_travelled <= 450:
 #		print("Respawning ", self)

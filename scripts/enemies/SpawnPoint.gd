@@ -42,25 +42,25 @@ func populate(var rules = []):
 
 func _on_spawn():
 	var e = enemy.instance()
-	var split = spawn_rules[spawned].split(" ")
+#	var split = spawn_rules[spawned].split(" ")
 #	print("[%s] Split on spawn (%s spawned)" % [self.name, spawned], split)
-	print("Spawn rule ", spawn_rules[spawned])
+#	print("Spawn rule ", spawn_rules[spawned])
 	match spawn_rules[spawned]:
 		"path": # follow the road
 			e.on_path = true
 			e.followed_path = world.get_node("Map").get_node("Road").get_child(initial_index).points
 			e.global_position = e.followed_path[0]
-			print("Matching Path")
+#			print("Matching Path")
 		"wild": # spawn and "beeline"
 			e.on_path = false
 			e.global_position = global_position
-			print("Matching Wild")
+#			print("Matching Wild")
 		"random": #random, can swap road
 			if rand_range(0, 1) < 0.5:
 				e.global_position = global_position
 			else:
 				e.on_path = true
-			print("Matching Rng")
+#			print("Matching Rng")
 		
 	# Determine phylactery
 	var phyla_count = world.get_node("Phylacteries").get_child_count() 
