@@ -58,6 +58,17 @@ initial_index = 1
 [node name="NewWaveTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="PlayerCoord" type="Node2D" parent="."]
+position = Vector2( 204, 85 )
+
+[node name="PhylaCoords" type="Node2D" parent="."]
+
+[node name="Coord" type="Node2D" parent="PhylaCoords"]
+position = Vector2( 559, 80 )
+
+[node name="Coord2" type="Node2D" parent="PhylaCoords"]
+position = Vector2( 79, 81 )
+
 [connection signal="enemy_down" from="." to="." method="_on_enemy_down"]
 [connection signal="timeout" from="SpawnPoints/SpawnPoint/SpawnTimer" to="SpawnPoints/SpawnPoint" method="_on_spawn"]
 [connection signal="timeout" from="SpawnPoints/SpawnPoint2/SpawnTimer" to="SpawnPoints/SpawnPoint2" method="_on_spawn"]

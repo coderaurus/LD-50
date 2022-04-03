@@ -5,7 +5,7 @@ signal dead
 
 
 func show_health():
-	$Health/AnimationPlayer.play("Show")
+	$Health.show_health()
 
 
 func _on_hit():

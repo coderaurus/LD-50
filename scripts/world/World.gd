@@ -20,16 +20,27 @@ func _ready():
 func load_next_map():
 	clear_map()
 	current_map += 1
+	
+	# Add map to world
 	var map = load(map_paths[current_map])
 	map = map.instance()
+	$Maps.add_child(map, true)
 	
-	if get_node_or_null("Player") == null:
+	
+	for tile_layer in map.get_children():
+		if tile_layer is TileMap:
+			tile_layer.fix_invalid_tiles()
+
+
+	player = get_node_or_null("Player")
+	if player == null:
 		player = player_scene.instance()
 		add_child(player)
 	
 	# Place player
 	var player_pos = map.get_node_or_null("PlayerCoords")
 	if player_pos != null:
+		print("  Set player position")
 		player.global_position = player_pos.global_position
 		
 	# Place phylacteries
@@ -37,21 +48,18 @@ func load_next_map():
 	if phyla_coords != null:
 		for coord in phyla_coords.get_children():
 			var phyla = phylactery_scene.instance()
-			phyla.global_position = coord.global_position
 			$Phylacteries.add_child(phyla)
+			phyla.global_position = coord.global_position
 	
-	# Add map to world
-	add_child(map)
-	print("Did we add map ", get_node("Map"))
+
+#	print("Did we add map ", get_node("Map"))
 	
 	# Start map
+	get_tree().paused = false
 	map.start_map()
 	
 
 func clear_map():
-	var last_map = get_node_or_null("Map")
-	if last_map != null:
-		last_map.queue_free()
 		
 	for phyla in $Phylacteries.get_children():
 		phyla.queue_free()
@@ -61,6 +69,10 @@ func clear_map():
 		
 	for corpse in $Corpses.get_children():
 		corpse.queue_free()
+	
+	var last_map = get_node_or_null("Maps").get_child(0)
+	if last_map != null:
+		last_map.queue_free()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

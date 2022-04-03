@@ -7,8 +7,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 
 [node name="Phylactery" type="KinematicBody2D" groups=["phylactery"]]
-position = Vector2( 80, 70 )
-z_index = 5
+z_index = 4
 z_as_relative = false
 collision_layer = 2
 collision_mask = 0
@@ -25,6 +24,7 @@ texture = ExtResource( 3 )
 [node name="Health" parent="." instance=ExtResource( 1 )]
 position = Vector2( -8, -43 )
 max_hp = 6
+current_hp = 2
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_hit"]

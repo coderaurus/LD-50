@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scenes/player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://fonts/baseFont.tres" type="DynamicFont" id=2]
 [ext_resource path="res://scenes/player/Phylactery.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/maps/Map_0.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Main.gd" type="Script" id=6]
 [ext_resource path="res://scripts/UI/UI.gd" type="Script" id=8]
 [ext_resource path="res://scripts/player/PhylacteryManager.gd" type="Script" id=9]
@@ -13,27 +12,22 @@
 script = ExtResource( 6 )
 
 [node name="World" type="Node2D" parent="."]
+pause_mode = 2
 script = ExtResource( 10 )
-map_paths = [ "res://scenes/maps/Map_0.tscn", "res://scenes/maps/Map_1.tscn" ]
+map_paths = [ "res://scenes/maps/Map_0.tscn", "res://scenes/maps/Map_1.tscn", "res://scenes/maps/Map_2.tscn" ]
 
 [node name="Player" parent="World" instance=ExtResource( 1 )]
 position = Vector2( 246, 206 )
 
-[node name="Map" parent="World" instance=ExtResource( 4 )]
-position = Vector2( 1, 0 )
-wave_info = {
-0: PoolStringArray( "2 path;1 wild", "2 path" ),
-1: PoolStringArray( "4 path", "4 path" ),
-2: PoolStringArray( "5 random", "2 path;2 wild" )
-}
-
 [node name="Enemies" type="Node2D" parent="World"]
+pause_mode = 1
 
 [node name="Camera2D" type="Camera2D" parent="World"]
 position = Vector2( 321, 158 )
 current = true
 
 [node name="Phylacteries" type="Node2D" parent="World"]
+pause_mode = 1
 script = ExtResource( 9 )
 
 [node name="Phylactery" parent="World/Phylacteries" instance=ExtResource( 3 )]
@@ -43,6 +37,9 @@ position = Vector2( 561, 77 )
 position = Vector2( 81, 78 )
 
 [node name="Corpses" type="Node2D" parent="World"]
+pause_mode = 1
+
+[node name="Maps" type="Node2D" parent="World"]
 
 [node name="UI" type="CanvasLayer" parent="."]
 pause_mode = 2
@@ -73,7 +70,13 @@ margin_bottom = 50.0
 custom_fonts/font = ExtResource( 2 )
 text = "Reload"
 
+[node name="NextLevel" type="Button" parent="UI/Reload Panel"]
+margin_top = 56.0
+margin_right = 107.0
+margin_bottom = 81.0
+custom_fonts/font = ExtResource( 2 )
+text = "Next level"
+
 [connection signal="phylac_down" from="World/Phylacteries" to="World/Phylacteries" method="_on_phylac_down"]
 [connection signal="pressed" from="UI/Reload Panel/Reload" to="." method="_on_Reload"]
-
-[editable path="World/Map"]
+[connection signal="pressed" from="UI/Reload Panel/NextLevel" to="." method="_on_next_level"]

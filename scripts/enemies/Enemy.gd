@@ -10,7 +10,7 @@ var followed_path : Array = []
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var speed = 50
+var speed = 75
 var velocity = Vector2.ZERO
 var target
 var attack_target
@@ -22,7 +22,7 @@ var respawn_point : Vector2
 var distance_travelled = 0
 
 onready var world = get_tree().current_scene.get_node("World")
-onready var map = world.get_node("Map")
+onready var map = world.get_node("Maps").get_child(0)
 onready var corpse = preload("res://scenes/corpses/Corpse.tscn")
 
 func _ready():
@@ -34,7 +34,7 @@ func activate():
 	attacking = false
 	distance_travelled = 0
 	
-#	print("%s activate"% self.name)
+#	print("%s activate" % self)
 	if !on_path: # Wild aka beeline / Random -> beeline
 #		print("   Wild or Random Wild")
 		_check_target()
@@ -46,11 +46,11 @@ func activate():
 		target = followed_path[1]
 #		print("Line ", line.name)
 #		print("On path", followed_path)
-	elif on_path: # On path
-#		print("   Random Path")
+	elif on_path: # On path, followed path predefined
+#		print("   Path")
 		global_position = followed_path[0]
 		target = followed_path[1]
-	print("[%s] Targetting %s" % [self.name, target])
+#	print("[%s] Targetting %s" % [self.name, target])
 	$RespawnTimer.start()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -62,6 +62,7 @@ func _physics_process(delta):
 			navigate_and_move()
 
 func _check_target():
+#	print("Target valid %s " % is_instance_valid(target))
 	if !is_instance_valid(target) and !on_path:
 		if world.get_node("Phylacteries").get_child_count() > 0:
 			var closest_distance = 10000
@@ -71,6 +72,7 @@ func _check_target():
 				if distance < closest_distance:
 					closest_distance = distance
 					closest_phyla = phyla
+			print("Closest phyla % ", closest_phyla)
 			target = closest_phyla
 		elif world.get_node_or_null("Player") != null:
 			target = world.get_node("Player")
@@ -82,17 +84,22 @@ func _check_target():
 
 func navigate_and_move():
 	if !on_path and is_instance_valid(target):
-		if target.global_position != target_pos:
+#		print("%s navigate" % self)
+#		print("   Target global: %s" % target.global_position)
+##		print("   Target pos:    %s" % target_pos)
+#		print("   Path (empty? %s): " % path.empty(), path)
+		if target.global_position != target_pos or path.empty():
 			target_pos = target.global_position
-	#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
+#			path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
 			path = map.get_simple_path(global_position, target_pos, false)
+#			print("     Simple path (%s) from %s to %s: " % [map, global_position, target_pos], path)
 	else:
 		if target is Vector2 and target != target_pos:
 			target_pos = target
 	#		path = map.get_simple_path(map.get_child(0).world_to_map(global_position), map.get_child(0).world_to_map(target_pos), false)
 			path = map.get_simple_path(global_position, target_pos, false)
 #		print(path)
-#	$PathVisual.points = path
+	$PathVisual.points = path
 	
 	# Get path
 	if path.size() > 1:
@@ -103,7 +110,7 @@ func navigate_and_move():
 		
 #		print($RayCast2D.cast_to)
 		# Reach point, pop it from the list
-		if global_position == path[1] or global_position.distance_to(path[1]) < 8:
+		if global_position == path[1] or global_position.distance_to(path[1]) < 1:
 			path.pop_front()
 	elif on_path:
 		if followed_path.size() > 1:
@@ -134,7 +141,7 @@ func _on_dead():
 	var c = corpse.instance()
 	c.global_position = global_position
 	world.get_node("Corpses").add_child(c)
-	get_tree().current_scene.get_node("World").get_node("Map").emit_signal("enemy_down")
+	get_tree().current_scene.get_node("World").get_node("Maps").get_child(0).emit_signal("enemy_down")
 	world.get_node("Player").emit_signal("enemy_down")
 	queue_free()
 
@@ -150,7 +157,6 @@ func _on_attack():
 
 
 func _on_attack_cooldown():
-	print("On atk cd")
 	if $RayCast2D.get_collider() != null:
 		$AttackTime.start()
 	else:
@@ -159,8 +165,8 @@ func _on_attack_cooldown():
 
 func _on_stuck_check():
 	# Enemy stuck, respawn
-	print("Travelled distance ", distance_travelled)
-	print("  Attacking: %s | On path: %s" % [attacking, on_path])
+#	print("Travelled distance ", distance_travelled)
+#	print("  Attacking: %s | On path: %s" % [attacking, on_path])
 #	print("  Spawning back at %s" % respawn_point)
 	if distance_travelled <= 450:
 #		print("Respawning ", self)

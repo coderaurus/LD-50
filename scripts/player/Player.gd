@@ -12,7 +12,7 @@ var speed = 100
 var velocity = Vector2.ZERO
 var vulnerable = false
 
-var souls = 0 
+var souls = 5 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -32,6 +32,9 @@ func _process(delta):
 	elif Input.is_action_pressed("move_right"):
 		velocity += Vector2.RIGHT
 	
+	if Input.is_action_just_pressed("heal"):
+		heal_phylactery()
+	
 	if velocity != Vector2.ZERO:
 		velocity.normalized()
 	
@@ -39,8 +42,16 @@ func _physics_process(delta):
 	move_and_slide(velocity * speed)
 
 
+func heal_phylactery():
+	var phyla = $Aura.phylactery_in_aura
+	var missing = phyla.get_node("Health").health_missing()
+	if missing > 0 and souls >= missing:
+		souls -= missing
+		phyla.get_node("Health").emit_signal("heal", missing)
+
+
 func show_health():
-	$Health/AnimationPlayer.play("Show")
+	$Health.show_health()
 
 
 func _on_hit():

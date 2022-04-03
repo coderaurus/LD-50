@@ -10,7 +10,17 @@ var enemy_wave_left = 10
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	wave = 0
+	waves = 0
 	waves = wave_info.size()
+
+
+func get_simple_path_global(start_global: Vector2, end_global: Vector2, optimize: bool = true) -> PoolVector2Array:
+	var path: PoolVector2Array = get_simple_path(to_local(start_global), to_local(end_global), optimize)
+	for i in range(path.size()):
+		path[i] = to_global(path[i])
+	return path
+
 
 func start_map():
 	show_current_healths()
@@ -35,9 +45,9 @@ func _wave_clear():
 
 
 func show_current_healths():
-	for phyla in get_parent().get_node("Phylacteries").get_children():
+	for phyla in get_parent().get_parent().get_node("Phylacteries").get_children():
 		phyla.show_health()
-	get_parent().get_node("Player").show_health()
+	get_parent().get_parent().get_node("Player").show_health()
 
 
 func _on_new_wave():
