@@ -1,10 +1,43 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scenes/Health.tscn" type="PackedScene" id=1]
+[ext_resource path="res://fonts/baseFont.tres" type="DynamicFont" id=2]
 [ext_resource path="res://gfx/phylactery.png" type="Texture" id=3]
 [ext_resource path="res://scripts/player/Phylactery.gd" type="Script" id=4]
+[ext_resource path="res://animations/phylactery/Show Heal Tip.tres" type="Animation" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
+
+[sub_resource type="Animation" id=2]
+resource_name = "Hide Heal Tip"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("HealTooltip:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("HealTooltip:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
 
 [node name="Phylactery" type="KinematicBody2D" groups=["phylactery"]]
 z_index = 4
@@ -25,6 +58,21 @@ texture = ExtResource( 3 )
 position = Vector2( -8, -43 )
 max_hp = 6
 current_hp = 2
+
+[node name="HealTooltip" type="Label" parent="."]
+self_modulate = Color( 1, 1, 1, 0 )
+margin_left = 10.0
+margin_top = -35.0
+margin_right = 82.0
+margin_bottom = -21.0
+custom_fonts/font = ExtResource( 2 )
+text = "Heal (F)"
+valign = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+"anims/Hide Heal Tip" = SubResource( 2 )
+anims/RESET = SubResource( 3 )
+"anims/Show Heal Tip" = ExtResource( 5 )
 
 [connection signal="dead" from="." to="." method="_on_dead"]
 [connection signal="hit" from="." to="." method="_on_hit"]

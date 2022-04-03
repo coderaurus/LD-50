@@ -27,6 +27,8 @@ func _on_body_entered(body):
 	elif body.is_in_group("phylactery"):
 		print("Phylactery in range")
 		phylactery_in_aura = body
+		if body.get_node("Health").health_missing() > 0:
+			body.get_node("AnimationPlayer").play("Show Heal Tip")
 		
 
 
@@ -36,4 +38,6 @@ func _on_body_exited(body):
 		enemies_in_aura.remove(index)
 	elif body.is_in_group("phylactery"):
 		phylactery_in_aura = null
+		if body.get_node("HealTooltip").visible:
+			body.get_node("AnimationPlayer").play("Hide Heal Tip")
 	
