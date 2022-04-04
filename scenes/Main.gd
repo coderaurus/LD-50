@@ -62,6 +62,9 @@ func _on_reload():
 	$SoundPlayer.sound("click")
 	level_complete = false
 	$World.reload_map()
+	add_score(0)
+	score = 0
+	$UI.hide_reload()
 	get_tree().paused = false
 
 
@@ -74,4 +77,8 @@ func _on_next_level():
 
 func _on_play_again():
 	$SoundPlayer.sound("click")
+	game_started = false
+	level_complete = false
+	$World/Player.souls = 0 
+	score = 0
 	get_tree().reload_current_scene()

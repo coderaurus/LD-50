@@ -50,9 +50,17 @@ func _physics_process(delta):
 
 func heal_phylactery():
 	var phyla = $Aura.phylactery_in_aura
+	if !is_instance_valid(phyla):
+		print("Phyla not valid")
+		return
 	var missing = phyla.get_node("Health").health_missing()
-	if missing > 0 and souls >= missing:
-		souls -= missing
+	print("Phyla [%s] missing %s" % [phyla.get_node("Health").alive(), missing])
+	if missing > 0 and phyla.get_node("Health").alive() and souls > 0:
+		if souls >= missing:
+			souls -= missing
+		else:
+			missing = missing - souls
+			souls -= missing
 		phyla.get_node("Health").emit_signal("heal", missing)
 		get_tree().current_scene.get_node("SoundPlayer").sound("phylactery_heal")
 		get_tree().current_scene.show_souls(souls)

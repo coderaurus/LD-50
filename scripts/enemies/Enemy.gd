@@ -86,7 +86,7 @@ func _check_target():
 	if $RayCast2D.get_collider() == null and attacking:
 		attacking = false
 		$AnimationPlayer.advance(0)
-		$AnimationPlayer.play("attack")
+		$AnimationPlayer.play("Idle")
 		
 
 
@@ -175,8 +175,9 @@ func _on_attack_cooldown():
 		$AnimationPlayer.play("attack")
 	else:
 		attacking = false
-		$AnimationPlayer.advance(0)
-		$AnimationPlayer.play("idle")
+#		$AnimationPlayer.advance(0)
+		$AnimationPlayer.stop()
+		$AnimationPlayer.play("Idle")
 
 
 func _on_stuck_check():

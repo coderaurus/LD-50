@@ -10,6 +10,7 @@ var alive : bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	alive = true
 	if current_hp == 0:
 		current_hp = max_hp
 	$Health2.text = str(current_hp)

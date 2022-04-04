@@ -32,7 +32,7 @@ func toggle_menu():
 		$Menu.hide()
 		get_tree().paused = false
 		if !get_parent().game_started:
-			get_parent().game_started = false
+			get_parent().game_started = true
 			$Menu/Label.text = "Mortals wait.."
 			$Menu/Resume.text = "Resume"
 	else:

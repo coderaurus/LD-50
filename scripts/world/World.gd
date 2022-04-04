@@ -6,6 +6,7 @@ onready var phylactery_scene = preload("res://scenes/player/Phylactery.tscn")
 export var map_paths : Array	= []
 var current_map = -1
 var player
+var souls_on_level_start = 0
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -21,6 +22,9 @@ func _ready():
 func reload_map():
 	get_parent().get_node("UI").fade_out()
 	yield(get_parent().get_node("UI").get_node("FadeScreen/AnimationPlayer"), "animation_finished")
+	$Player.souls = souls_on_level_start
+	get_parent().score = 0
+	
 	clear_map()
 	load_current_map()
 
@@ -56,7 +60,8 @@ func load_current_map():
 	if player_pos != null:
 #		print("  Set player position")
 		player.global_position = player_pos.global_position
-		
+	souls_on_level_start = player.souls
+	
 	# Place phylacteries
 	var phyla_coords = map.get_node_or_null("PhylaCoords")
 	if phyla_coords != null:
@@ -67,11 +72,15 @@ func load_current_map():
 	
 
 #	print("Did we add map ", get_node("Map"))
+	get_parent().show_souls(player.souls)
+	get_parent().add_score(0)
+	
+	# Start map
+	get_tree().paused = false
 	if get_parent().game_started:
 		get_parent().get_node("UI").fade_in()
 		yield(get_parent().get_node("UI").get_node("FadeScreen/AnimationPlayer"), "animation_finished")
-	# Start map
-	get_tree().paused = false
+	
 	map.start_map()
 	get_parent().get_node("MusicPlayer").song("main")
 
