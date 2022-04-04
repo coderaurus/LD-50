@@ -22,6 +22,9 @@ func _ready():
 func reload_map():
 	get_parent().get_node("UI").fade_out()
 	yield(get_parent().get_node("UI").get_node("FadeScreen/AnimationPlayer"), "animation_finished")
+	if !is_instance_valid($Player):
+		player = player_scene.instance()
+		add_child(player)
 	$Player.souls = souls_on_level_start
 	get_parent().score = 0
 	

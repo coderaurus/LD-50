@@ -12,7 +12,7 @@ var score = 0
 func _ready():
 	randomize()
 	get_tree().paused = true
-	show_souls($World.get_node("Player").souls)
+	show_souls($World.player.souls)
 	add_score(0)
 	yield($MusicPlayer, "tree_entered")
 	$MusicPlayer.song("main")

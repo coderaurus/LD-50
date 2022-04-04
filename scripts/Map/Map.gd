@@ -45,9 +45,10 @@ func _wave_clear():
 
 
 func show_current_healths():
-	for phyla in get_parent().get_parent().get_node("Phylacteries").get_children():
+	var world = get_parent().get_parent()
+	for phyla in world.get_node("Phylacteries").get_children():
 		phyla.show_health()
-	get_parent().get_parent().get_node("Player").show_health()
+	world.player.show_health()
 
 
 func _on_new_wave():

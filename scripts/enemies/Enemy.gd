@@ -80,8 +80,8 @@ func _check_target():
 					closest_phyla = phyla
 #			print("Closest phyla % ", closest_phyla)
 			target = closest_phyla
-		elif world.get_node_or_null("Player") != null:
-			target = world.get_node("Player")
+		elif is_instance_valid(world.player):
+			target = world.player
 			
 	if $RayCast2D.get_collider() == null and attacking:
 		attacking = false
@@ -135,7 +135,7 @@ func navigate_and_move():
 	var collider = $RayCast2D.get_collider()
 	if collider != null and !attacking:
 #		print("[%s] Attack %s " % [self.name, collider.name])
-		if collider.is_in_group("phylactery") or collider.is_in_group("corpse") or (collider.name == "Player" and collider.is_vulnerable()):
+		if collider.is_in_group("phylactery") or collider.is_in_group("corpse") or (collider.name.find("Player") != -1 and collider.is_vulnerable()):
 			attacking = true
 			attack_target = collider
 			$AttackTime.start()
@@ -155,7 +155,7 @@ func _on_dead():
 	c.get_node("Sprite").flip_h = $Sprite.flip_h
 	get_tree().current_scene.get_node("World").get_node("Maps").get_child(0).emit_signal("enemy_down")
 	get_tree().current_scene.get_node("SoundPlayer").sound("enemy_death")
-	world.get_node("Player").emit_signal("enemy_down")
+	world.player.emit_signal("enemy_down")
 	queue_free()
 
 
